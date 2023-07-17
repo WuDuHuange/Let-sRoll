@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.wudu</groupId>
+    <artifactId>Let_sRoll</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>Roll</module>
+        <module>test</module>
+    </modules>
+
+    <properties>
+        <speing-boot.version>2.4.2</speing-boot.version>
+        <lombok.version>1.18.26</lombok.version>
+        <mysql.version>8.0.11</mysql.version>
+        <mybatis-plus.version>3.5.1</mybatis-plus.version>
+        <druid.version>1.1.23</druid.version>
+        <hu-tool.version>5.1.0</hu-tool.version>
+        <junit-platform.version>1.8.2</junit-platform.version>
+        <junit-jupiter.version>5.9.2</junit-jupiter.version>
+        <jjwt.version>0.9.1</jjwt.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+    </properties>
+    <dependencyManagement>
+        <dependencies>
+            <!--spring-boot版本过高，jwt报错，需要指定jaxb版本-->
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-api.version}</version>
+            </dependency>
+            <!--spring-boot-dependencies为我们管理Spring Boot许多依赖和依赖的版本号-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${speing-boot.version}</version>
+                <!--scope只能用在dependencyManagement里面，作用是管理子模块依赖jar包的版本，保持当前项目所有依赖jar包的版本统一-->
+                <scope>import</scope>
+                <!--引入下载该Jar包的所有依赖-->
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <!--MySQL数据库驱动-->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+            <!--mybatis-plus持久层框架启动器-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!--Druid数据库连接池启动器，它是Alibaba公司的产品，号称世界上最高效的连接池-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+            <!-- 胡图工具类，提供了很多工具类-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hu-tool.version}</version>
+            </dependency>
+            <!-- 单元测试  -->
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-launcher</artifactId>
+                <version>${junit-platform.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-commons</artifactId>
+                <version>${junit-platform.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>0.9.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
