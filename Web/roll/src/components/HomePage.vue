@@ -2,18 +2,37 @@
     <div id="container">
         <Transition name="fade"><div class="overlay" v-if="startAnimation"></div></Transition>
         <Transition name="fade">
-            <div id="roll-result" v-if="showResult" :class="getStyleClass">
+            <div id="roll-result" v-if="showResult&& !isTen" :class="getStyleClass" >
                 <img src="../assets/operator.png" alt="op" >
                 <span>{{ rarity }}</span>
                 <el-rate v-model="rarityValue" show-text disabled :colors="colors" ></el-rate>
                 <el-button type="primary" icon="el-icon-check" circle @click="startAnimation=false;showResult=false"></el-button>
             </div>
         </Transition>
-        
+        <Transition name="fade">
+            <div v-if="showResult && isTen" class="roll-ten">
+                <div class="rollTen-result"  :class="getShadowStyle(item)" v-for="item in resultList" :key="item.indexOf()">
+                <img src="../assets/operator.png" alt="op" >
+                <span>{{ item }}</span>
+                <el-button type="primary" icon="el-icon-check" circle @click="startAnimation=false;showResult=false"></el-button>
+            </div>
+            </div>
+            <!--十连抽结果,v-for绑定resultList数组-->
+            
+        </Transition>
         <div id="circle" :class="{'animate-shadow':startAnimation}"></div>
         <div id="user-info">
             <span>欢迎回来<br/></span>
             <span class="username">{{username}}</span>
+        </div>
+        <!-- 切换十连抽/单抽 -->
+        <div class="switch">
+            <span>单抽/十连</span>
+            <el-switch
+                v-model="isTen"
+                active-color="#13ce66"
+                inactive-color="#ff4949">
+            </el-switch>
         </div>
         <div id="functional-area">
             <a id="up-box" :class="{'animate-left':startAnimation}">
@@ -32,6 +51,50 @@
 
 
 <style lang="less" scoped>
+.roll-ten{
+    position: absolute;
+    height: 450px;
+    width: 800px;
+    z-index: 100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    .rollTen-result{
+        background-color: #ffffffe5;
+        margin: 20px;
+        img{
+            margin: 10px auto 10px auto;
+            height: 100px;
+            width: 100px;
+        }
+        span{
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            color: #000000;
+        }
+        .el-rate{
+            margin: 10px auto 10px auto;
+        }
+        .el-button{
+            margin: 10px auto 10px auto;
+        }
+    }
+}
+.switch{
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #ffa600;
+    font-size: 25px;
+    z-index: 1;
+    margin: 10px 0 0 10px;
+}
 #container{
     position: absolute;
     height: 85vh;
@@ -262,31 +325,55 @@ export default {
                 '3': '#4ce7fc',
                 '2': '#fffdfd',
                 '1': '#c2c2c2'},
-            showResult: false
+            showResult: false,
+            isTen: false,
+            resultList: []
+            
         }
     },
     methods:{
         toggleStart(){
             const self = this;
             this.startAnimation = true;
-            api.post('/reco/roll',{
-                username:localStorage.getItem('username'),
-                userid:localStorage.getItem('id')
-            }).then(function(response){
-                if(response.data.code === 200){
-                    console.log(response.data.data);
-                    self.rarity = response.data.data;
-                    self.rarityValue = self.getRarityValue();
-                    setTimeout(function(){
-                        self.showResult = true;
-                    },1000)
-                }else{
-                    alert(response.data.data)
-                    console.log(response);
-                }
-            }).catch(function(error){
-                console.log(error);
-            })
+            if(!this.isTen){
+                api.post('/reco/roll',{
+                    username:localStorage.getItem('username'),
+                    userid:localStorage.getItem('id')
+                }).then(function(response){
+                    if(response.data.code === 200){
+                        console.log(response.data.data);
+                        self.rarity = response.data.data;
+                        self.rarityValue = self.getRarityValue();
+                        setTimeout(function(){
+                            self.showResult = true;
+                        },1000)
+                    }else{
+                        alert(response.data.data)
+                        console.log(response);
+                    }
+                }).catch(function(error){
+                    console.log(error);
+                })
+            }else{
+                api.post('/reco/rollTen',{
+                    username:localStorage.getItem('username'),
+                    userid:localStorage.getItem('id')
+                }).then(function(response){
+                    if(response.data.code === 200){
+                        console.log(response.data.data);
+                        self.resultList = response.data.data;
+                        setTimeout(function(){
+                            self.showResult = true;
+                        },1000)
+                    }else{
+                        alert(response.data.data)
+                        console.log(response);
+                    }
+                }).catch(function(error){
+                    console.log(error);
+                })
+            }
+            
         },
         getRarityValue(){
             switch(this.rarity){
@@ -301,7 +388,22 @@ export default {
                 default:
                     return 1;
             }
+        },
+        getShadowStyle(item){
+            switch(item){
+                case 'ur':
+                    return 'animate-ur';
+                case 'ssr':
+                    return 'animate-ssr';
+                case 'sr':
+                    return 'animate-sr';
+                case 'r':
+                    return 'animate-r';
+                default:
+                    return 'animate-r';
+            }
         }
+        
     },
     computed:{
         getStyleClass(){
@@ -311,7 +413,8 @@ export default {
                 'animate-sr': this.rarity === 'sr',
                 'animate-r': this.rarity === 'r',
             }
-        }
+        },
+        
     }
 }
 </script>

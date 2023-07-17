@@ -56,4 +56,23 @@ public class RecoController {
             return CommonResult.fail(e.getMessage());
         }
     }
+
+    // 十连抽
+    @PostMapping("/rollTen")
+    public CommonResult rollTen(@RequestBody Reco reco) {
+        try {
+            String username = reco.getUsername();
+            int userid = reco.getUserid();
+            // 调用十次roll，结果存入result数组
+            String[] result = new String[10];
+            for (int i = 0; i < 10; i++) {
+                result[i] = recoService.roll(username, userid);
+            }
+            return CommonResult.success(result);
+        } catch (Exception e) {
+            log.error("十连抽失败", e);
+            return CommonResult.fail(e.getMessage());
+        }
+    }
+
 }

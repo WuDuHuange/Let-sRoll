@@ -62,7 +62,9 @@ export default {
       tableData: [],
       score: 0,
       commentOfScore: '',
-      username: localStorage.getItem('username')
+      username: localStorage.getItem('username'),
+      recoNum: 0,
+      recoList: []
     }
   },
   created(){
@@ -120,6 +122,7 @@ export default {
       }).then(function(response){
         if(response.data.code === 200){
           self.tableData = response.data.data
+          self.recoNum = response.data.data.length
         }else{
           alert(response.data.data)
         }
@@ -169,7 +172,8 @@ export default {
         this.commentOfScore = '史诗级非酋！'
       }
 
-    }
+    },
+    
   }
 }
 </script>
